@@ -6,4 +6,4 @@ djangorestframework-simplejwt
 PyJWT
 pytz
 sqlparse
-
+web3

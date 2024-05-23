@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'eligible-voter', views.EligibleVoterAdminView, basename='eligible-voter')
+router.register(r'candidates', views.CandidateView)
 
 urlpatterns = [
     path('', include(router.urls)),
