@@ -3,8 +3,8 @@ from rest_framework import generics, viewsets, permissions, status
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
-from .serializers import CustomUserSerializer, AdminEligibleVotersSerializer, EthereumAddressSerializer, CandidateSerializer
-from .models import EligibleVoter, EthereumAddress, Candidate
+from .serializers import CustomUserSerializer, AdminEligibleVotersSerializer, EthereumAddressSerializer, CandidateSerializer, ElectionTimeSerializer
+from .models import EligibleVoter, EthereumAddress, Candidate, ElectionTime
 
 from django.contrib.auth.hashers import make_password
 
@@ -38,10 +38,25 @@ class EligibleVoterAdminView(viewsets.ModelViewSet):
     serializer_class = AdminEligibleVotersSerializer
     permission_classes = [permissions.IsAdminUser]
 
-class CandidateView(viewsets.ModelViewSet):
+class CandidateAdminView(viewsets.ModelViewSet):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
     permission_classes = [permissions.IsAdminUser]
+
+class ElectionTimeAdminView(viewsets.ModelViewSet):
+    queryset =  ElectionTime.objects.all()
+    serializer_class = ElectionTimeSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class CandidateReadOnlyView(viewsets.ReadOnlyModelViewSet):
+    queryset = Candidate.objects.all()
+    serializer_class = CandidateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class ElectionTimeReadOnlyView(viewsets.ReadOnlyModelViewSet):
+    queryset = ElectionTime.objects.all()
+    serializer_class = ElectionTimeSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class AddEtherumAddressView(generics.CreateAPIView):
     queryset = EthereumAddress.objects.all()

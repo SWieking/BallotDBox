@@ -96,12 +96,12 @@ describe("BallotBox", function() {
     describe("Vote", () => {
         it("Votes and verifies counts", async() => {
 
-            // Set voting time period
+            // Set Election time period
             const currentTime = Math.floor(Date.now() / 1000);
             startTime = currentTime + 60;
             endTime = currentTime + 3600;
-            await ballotBox.connect(deployer).setVotingTime(startTime, endTime);
-            //console.log(`Voting time set from ${startTime} to ${endTime}`);
+            await ballotBox.connect(deployer).setElectionTime(startTime, endTime);
+            //console.log(`Election time set from ${startTime} to ${endTime}`);
 
             // Increase blockchain time to just past the start time
             await time.increase(61)

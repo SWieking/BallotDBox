@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import EligibleVoter, EthereumAddress, Candidate
+from .models import EligibleVoter, EthereumAddress, Candidate, ElectionTime
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -27,3 +27,7 @@ class EthereumAddressSerializer(serializers.ModelSerializer):
 class CandidateSerializer(serializers.ModelSerializer):
     model = Candidate
     field = ['id', 'name', 'party']
+
+class ElectionTimeSerializer(serializers.ModelSerializer):
+    model =  ElectionTime
+    fields = ['start_time','end_time']

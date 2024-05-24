@@ -91,14 +91,14 @@ contract BallotBox{
         return totalVotes;
     }
 
-    function setVotingTime(uint256 _startTime, uint256 _endTime) public onlyOwner{
+    function setElectionTime(uint256 _startTime, uint256 _endTime) public onlyOwner{
         require(startTime == 0 && endTime == 0, "Times already set");
         require(_startTime > 0 && _startTime > block.timestamp && _endTime > 0 && _endTime > _startTime, "Invalid Times");
         startTime = _startTime;
         endTime = _endTime;
     }
 
-    function getVotingTime() public view returns (uint256, uint256) {
+    function getElectionTime() public view returns (uint256, uint256) {
         return (startTime, endTime);
     }
 

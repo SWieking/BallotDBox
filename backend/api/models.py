@@ -69,3 +69,13 @@ class Candidate(models.Model):
           
     def __str__(self):
         return f"{self.name} ({self.party})"
+    
+class ElectionTime(models.Model):
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            if not self.pk and ElectionTime.objects.exists(): 
+                raise Exception('There can be only one ElectionTime instance') 
+            return 
