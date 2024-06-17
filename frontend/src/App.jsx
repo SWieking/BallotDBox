@@ -6,6 +6,7 @@ import Register from "./pages/Register"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
+import Vote from "./pages/Vote"
 
 function Logout() {
   localStorage.clear()
@@ -36,6 +37,7 @@ function App() {
           <Route path="/login" element={<Login />}/>
           <Route path="/logout" element={<Logout />}/>
           <Route path="/register" element={<RegisterAndLogout />}/>
+          <Route path="/vote" element={<ProtectedRoute><Vote/></ProtectedRoute>} />
           <Route path="*" element={<NotFound />}/>
         </Routes>
       </BrowserRouter>

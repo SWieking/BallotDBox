@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 
 contract BallotBox{
 
+    uint256 public isDeployed;
     address public owner;
     uint256 public totalCandidates;
     uint256 public totalVotes;
@@ -38,6 +39,7 @@ contract BallotBox{
     constructor() {
         owner = msg.sender;
         totalCandidates = 0;
+        isDeployed = 1;
     }
 
     function addEligibleVoter(address addr) public onlyOwner{
@@ -74,10 +76,11 @@ contract BallotBox{
     }
 
     function vote(uint256 _id) public onlyEligibleVoter{
-        require(!votersStatus[msg.sender].hasVoted);
+        require(!votersStatus[msg.sender].hasVoted, "Already voted");
         require(startTime != 0 && endTime != 0, "Times not set");
         require(block.timestamp >= startTime, "Vote not startet");
         require(block.timestamp <= endTime, "Vote endet");
+        require(candidates[_id].id != 0, "Candidate does not exists");
         votersStatus[msg.sender].hasVoted = true;
         candidates[_id].voteCount ++;
         totalVotes ++;

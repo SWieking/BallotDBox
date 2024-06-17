@@ -4,10 +4,12 @@ from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Max
-from .blockchain_utils import add_candidate_to_blockchain, delete_candidate_from_blockchain, update_candidate_on_blockchain, add_etherum_address_to_blockchain
+from .blockchain_utils import add_candidate_to_blockchain, delete_candidate_from_blockchain, update_candidate_on_blockchain, add_etherum_address_to_blockchain, setElectionTime
+import datetime
 
 class CustomUser(AbstractUser):
     id_number = models.CharField(max_length=10,unique=True)
+    has_registered_ethereum_address = models.BooleanField(default=False)
 
 class EligibleVoter(models.Model):
     
@@ -27,6 +29,7 @@ class EligibleVoter(models.Model):
 class EthereumAddress(models.Model):
     address = models.CharField(max_length=42, unique=True)
     is_on_blockchain = models.BooleanField(default=False)
+    has_voted = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
@@ -34,6 +37,7 @@ class EthereumAddress(models.Model):
                 response = add_etherum_address_to_blockchain(self.address)
                 if response !=  'success':
                     raise Exception(f'Failed to add Candidate to blockchain, rollback changes ({response})')
+                self.is_on_blockchain = True
                 super().save(*args, **kwargs)
 
     def __str__(self):
@@ -62,11 +66,11 @@ class Candidate(models.Model):
 
     def delete(self,*args, **kwargs):
         with transaction.atomic():
-            super().delete(*args, **kwargs)
             response = delete_candidate_from_blockchain(self.blockchain_id)
             if response !=  'success':
                 raise Exception(f'Failed to remove from blockchain, rollback changes ({response})')
-          
+            super().delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.name} ({self.party})"
     
@@ -78,4 +82,11 @@ class ElectionTime(models.Model):
         with transaction.atomic():
             if not self.pk and ElectionTime.objects.exists(): 
                 raise Exception('There can be only one ElectionTime instance') 
-            return 
+            response = setElectionTime(int(self.start_time.timestamp()), int(self.end_time.timestamp()))
+            if response != 'success':
+                raise Exception(f'Failed to set Election times, rollback changes ({response})')
+            super().save(*args,**kwargs) 
+
+class BlockchainInfo(models.Model):
+    contract_address = models.CharField(max_length=42)
+    abi = models.JSONField()

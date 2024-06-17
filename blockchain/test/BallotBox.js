@@ -26,12 +26,12 @@ describe("BallotBox", function() {
             const candidate = candidateList[i-1]
             await ballotBox.connect(deployer).addCandidate(candidate.id,candidate.name, candidate.party)
         }
-        
+
         // add eligible voters
         for(i = 0; i< users.length; i++){
             await ballotBox.connect(deployer).addEligibleVoter(users[i].address)
         }
-
+        
     })
 
 

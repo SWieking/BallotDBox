@@ -2,7 +2,7 @@ async function main() {
     // Setup accounts & variables
     const [deployer] = await ethers.getSigners()
 
-    console.log("Deploying contracts with the account:", deployer.address)
+    console.log("Deploying contract with the account:", deployer.address)
     
     //Deploy contract
     const BallotBox = await ethers.getContractFactory("BallotBox")
