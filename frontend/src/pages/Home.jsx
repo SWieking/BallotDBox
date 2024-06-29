@@ -1,34 +1,26 @@
 import { useEffect, useState} from 'react'
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import api from '../api'
-import VotingForm from '../components/VotingForm'
+import Countdown from '../components/Countdown'
+import ConnectButton from '../components/ConnectButton'
+import '../styles.css'
+
 
 
 function Home() {
-    const [metamaskInstalled, setMetamaskInstalled] = useState(false)
+    const [metamaskConnected, setMetamaskConnected] = useState(false)
+    const [metamaskAccount, setMetamaskAccount] = useState(null)
     const [electionTime, setElectionTime] = useState(null)
-    const [loadingCheckMetamask, setLoadingCheckMetamask] = useState(null)
     const [loadingFetchData, setLoadingFetchData] = useState(true)
+    const [countdownCompleted, setCountdownCompleted] = useState(false)
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"]
+
+    const navigate = useNavigate()
 
     useEffect(() => {
-        checkMetamaskInstalled()
         fetchElectionTime()
     }, [])
-
-    const checkMetamaskInstalled = () => {
-        setLoadingCheckMetamask(true)
-        try{
-            if(window.ethereum && window.ethereum.isMetaMask){
-                setMetamaskInstalled(true)
-            }else{
-                setMetamaskInstalled(false)
-            }
-        }catch (error) {
-            setMetamaskInstalled(false)
-        } finally {
-            setLoadingCheckMetamask(false)
-        }
-    }
 
     const fetchElectionTime = async () => {
         setLoadingFetchData(true)
@@ -42,40 +34,64 @@ function Home() {
         }
     }
 
-    if (loadingCheckMetamask || loadingFetchData) {
-        return <div>Loading...</div>
+    const handleVoteClick = () => {
+        if (!metamaskAccount){
+            alert("Please connect to MetaMask first")
+        } else {
+            return navigate('/vote')
+        }
     }
 
-    if (!metamaskInstalled){
-        return <div>
-            <p>Metamsk is not installed. Please install Metamask to participate in the election.</p>
-            <a className="metamsk-link" href="https://metamask.io/download/" target="_blank" rel="noopener noreferrer">Install Metamask</a>
-        </div>
+    if(loadingFetchData){
+        return <p>Loading...</p>
     }
 
     if (!electionTime) {
         return <div>Could not fetch election times. Please try again later.</div>;
-    
     }
 
     const currentTime = new Date().valueOf()
     const startTime = new Date(electionTime.start_time)
     const endTime = new Date(electionTime.end_time)
 
-    if (currentTime >= startTime && currentTime <= endTime){
-        return < Navigate to='/vote' />
-    } else {
-        if (currentTime < startTime){
-            return <div>
-                <p>The Election has not started yet.</p>
-                <p>It will begin on {startTime.toDateString()} and end on {endTime.toDateString()}</p>
-            </div>
-        }else{
-            return <div>
-                <p>The voting period ended on {endTime.toDateString()}</p>
-            </div>
-        }
-    }
+    return (
+        <div className="container home-container" >
+            <header>
+                <h1>Public Voting Administration</h1>
+                <ConnectButton metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></ConnectButton>
+            </header>
+            <main>
+                <h2 className="title">Welcome to the Election</h2>
+                <div className="time-box">
+                    <p>Election starts on:</p>
+                    <p className="time">{startTime.getDate()}. {monthNames[startTime.getMonth()]} at {startTime.toLocaleTimeString(undefined,{timeStyle:'short'})}</p>
+                </div>
+                <div className="time-box">
+                    <p>Election ends on:</p>
+                    <p className="time">{endTime.getDate()}. {monthNames[endTime.getMonth()]} at {endTime.toLocaleTimeString(undefined,{timeStyle:'short'})}</p>
+                </div>
+                {
+                currentTime < startTime ? (
+                    <div>
+                        <p>The Election has not started yet.</p>
+                        <Countdown targetTime={startTime} onComplete={() => setCountdownCompleted()}/>
+                    </div>
+                ) : currentTime > endTime ? (
+                    <div>
+                        <p>The voting period ended!</p>
+                    </div>
+                ) : (
+                    <div>
+                        <p>The Election is currently ongoing.</p>
+                        <button onClick={handleVoteClick}>Vote</button>
+                    </div>
+                )
+                }
+            </main>
+            
+        </div>
+    )
+
 }
 
 export default Home

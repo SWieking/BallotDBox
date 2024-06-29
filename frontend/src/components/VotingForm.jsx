@@ -1,6 +1,8 @@
 import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import api from "../api"
+import ConnectButton from './ConnectButton'
+import "../styles.css"
 
 
 function VotingForm({signer, userAddress}) {
@@ -12,6 +14,7 @@ function VotingForm({signer, userAddress}) {
     const [votingSuccessful, setVotingSuccessful] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [metamaskAccount, setMetamaskAccount] = useState(null)
 
     useEffect(() => {
         fetchData()
@@ -45,7 +48,7 @@ function VotingForm({signer, userAddress}) {
             if(receipt && receipt.status === 1){
                 const res = await api.patch(`api/blockchain/set-address-voted/${userAddress}/`)
                 setError(null)
-                setU
+                setVotingSuccessful(true)
                 return <p>Your Vote was successful.</p>
             } else {
                 setError({'message':'Voting was unsuccessful!','code':1})
@@ -81,10 +84,16 @@ function VotingForm({signer, userAddress}) {
         return <p>{error.message}</p>
     }
 
-    if(succ)
+    if(votingSuccessful){
+        return <p>Your Vote was successful.</p>
+    }
 
     return (
-        <div className='form-container'>
+        <div className='container form-container'>
+            <header>
+                <h1>Public Voting Administration</h1>
+                <ConnectButton metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></ConnectButton>
+            </header>
             <h1>Voting</h1>
             {error && error.code === 1 && <p className='error'>{error}</p>}
             <form onSubmit={handleSubmit} className='form-container'>

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import api from '../api'
 import VotingForm from '../components/VotingForm'
 import { ethers } from 'ethers'
+import ConnectButton from "../components/ConnectButton"
+import '../styles.css'
 
 const Vote = () => {
     const [hasRegisteredEthereumAddress, setHasRegisteredEthereumAddress] = useState(false)
@@ -11,10 +13,21 @@ const Vote = () => {
     const [loadingFetchAddressStatus, setLoadingFetchAddressStatus] = useState(true)
     const [loadingFetchSigner, setLoadingFetchSigner] = useState(true)
     const [error, setError] = useState(null)
+    const [metamaskAccount, setMetamaskAccount] = useState(null)
 
     useEffect(() => {
         fetchUserAddressStatus()
         fetchEthereumSignerAndAddress()
+        if (window.ethereum) {
+            window.ethereum.on('chainChanged', () => handleMetamaskChanges)
+            window.ethereum.on('accountsChanged', () => handleMetamaskChanges)
+        }
+        return () => {
+            if (window.ethereum){
+                window.ethereum.removeListener('chainChanged', handleMetamaskChanges)
+                window.ethereum.removeListener('accountChanged', handleMetamaskChanges)
+            }
+        }
     }, [])
 
     const fetchUserAddressStatus = async () => {
@@ -87,6 +100,10 @@ const Vote = () => {
         }
     }
 
+    const handleMetamaskChanges = () => {
+        window.location.reload()
+    }
+
     if (loadingFetchAddressStatus || loadingFetchSigner)  {
         return <div>Loading...</div>
     }
@@ -106,20 +123,38 @@ const Vote = () => {
     if(ethereumAddressConfirmed){
         check_address_has_voted()
     } else {
-        if(hasRegisteredEthereumAddress){
-            return <div>
-                <p>You have already registered an Ethereum address for voting.</p>
-                <p>Your current Ethereum address is: {ethereumAddress}</p>
-                <p>Is this the address you already registered?</p>
-                <button onClick={() => setEthereumAddressConfirmed(true)}>Yes, confirm</button>
+        return (
+            <div className="container vote-container">
+                <header>
+                    <h1>Public Voting Administration</h1>
+                    <ConnectButton metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></ConnectButton>
+                </header>
+                <main>
+                    {hasRegisteredEthereumAddress ? (
+                        <div>
+                            <p>You have already registered an Ethereum address for voting.</p>
+                            <div className="address-box">
+                                <p>Your current Ethereum address is:</p>
+                                <p className="address">{ethereumAddress}</p>
+                            </div>
+                            <p>Is this the address you already registered?</p>
+                            <button onClick={() => setEthereumAddressConfirmed(true)}>Yes, confirm</button>
+                        </div>
+                    ) : (
+                        <div>
+                            <div className="address-box">
+                                <p>Your current Ethereum address is:</p>
+                                <p className="address">{ethereumAddress}</p>
+                            </div>
+                            <p>Is this the address you want to registere as your voting address? </p>
+                            <p className="alert">This action cannot be undone!</p>
+                            <button onClick={registerAddress}> Yes, confirm</button>
+                        </div>
+                    )
+                    }
+                </main>
             </div>
-        } else {
-            return <div>
-                <p>Your current Ethereum address is: {ethereumAddress}</p>
-                <p>Is this the address you want to use for voting? This action cannot be undone.</p>
-                <button onClick={registerAddress}> Yes, confirm</button>
-            </div>
-        }
+        )
     }
     return <VotingForm signer={ethereumSigner} userAddress={ethereumAddress} />
 }
