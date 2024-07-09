@@ -10,8 +10,8 @@ async function main() {
     await ballotBox.waitForDeployment()
 
     console.log(`Deployed Ballotbox Contract at: ${await ballotBox.getAddress()}\n`)
-
 }
+
 
 main().catch((error) => {
     console.error(error)

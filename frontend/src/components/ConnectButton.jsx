@@ -51,7 +51,7 @@ const ConnectButton = ({metamaskAccount, setMetamaskAccount}) => {
         <div>
             {metamaskAccount ? (
                 <div>
-                    <button disabled>{metamaskAccount}</button>
+                    <button disabled>{metamaskAccount.substr(0,5)}...{metamaskAccount.substr(-5)}</button>
                 </div>
             ) : (
                 <button onClick={handleConnect}>Connect to MetaMask</button>

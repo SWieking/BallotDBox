@@ -22,11 +22,44 @@ function Countdown({targetTime, onComplete}) {
         const minutes = Math.floor(totalSeconds / 60) % 60;
         const hours = Math.floor(totalSeconds / 3600) % 24;
         const days = Math.floor(totalSeconds / 86400);
-        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+        const times = [
+            {value: days, label:'Days'},
+            {value: hours, label:'Hours'},
+            {value: minutes, label:'Minutes'},
+            {value: seconds, label: 'Seconds'}
+        ]
+
+        return times
+
     };
 
+    const times = formatTimeLeft(timeLeft)
+    console.log(times)
 
-        return <p>Time left until start: {formatTimeLeft(timeLeft)}</p>;
+    const firstNoneZeroIndex = times.findIndex((time) => time.value > 0)
+    
+    return (
+        <div className='countdown-times'>
+            {times.map((time, i) => {
+                if (i>=firstNoneZeroIndex && firstNoneZeroIndex >= 0){
+                    return(
+                        <div key= {i} className='countdown-time'>
+                            <div className='countdown-v-l'>
+                                <p className = 'countdown-value'>{String(time.value).padStart(2,'0')}</p>
+                                <p className = 'countdown-label'>{time.label}</p>
+                            </div>
+                            {i<times.length - 1 && (<span className='countdown-colon'>:</span>)}
+                        </div>
+                    )
+                }else{
+                    return null
+                }
+            })}
+        </div>
+       
+    )
+        
     
 }
 

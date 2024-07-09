@@ -90,16 +90,24 @@ class EthereumAddressVoteUpdateView(generics.UpdateAPIView):
     lookup_field='address'
     
     def update(self,request, *args, **kwargs):
-        print(kwargs)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data={'has_voted': True}, partial=True)
+        print(f"Received update request for address: {kwargs['address']} by user {request.user}")
 
-        if serializer.is_valid():
-            serializer.save(raise_exception=True)
-            return Response({'message': "Ethereum Address updated successfully", 'data':serializer.data}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': "failed", 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        
+        try:
+            instance = self.get_object()
+            print(f"Found instance for address: {instance.address}")
+            serializer = self.get_serializer(instance, data={'has_voted': True}, partial=True)
+            
+            if serializer.is_valid():
+                self.perform_update(serializer)
+                instance.refresh_from_db()
+                print(f"Updated has_voted for address: {instance.address} to True")
+                return Response({'message': "Ethereum Address updated successfully", 'data':serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': "failed", 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'message': "failed", 'details': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def perform_update(self, serializer):
+        serializer.save()
     
 class BlockchainInfoListView(generics.ListAPIView):
     queryset = BlockchainInfo.objects.all()

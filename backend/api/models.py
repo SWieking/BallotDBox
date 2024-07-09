@@ -34,11 +34,15 @@ class EthereumAddress(models.Model):
     def save(self, *args, **kwargs):
         with transaction.atomic():
             if not self.pk:
-                response = add_etherum_address_to_blockchain(self.address)
-                if response !=  'success':
-                    raise Exception(f'Failed to add Candidate to blockchain, rollback changes ({response})')
-                self.is_on_blockchain = True
-                super().save(*args, **kwargs)
+                self.add_to_blockchain()
+            super().save(*args, **kwargs)
+    
+    def add_to_blockchain(self):
+        response = add_etherum_address_to_blockchain(self.address)
+        if response !=  'success':
+            raise Exception(f'Failed to add Candidate to blockchain, rollback changes ({response})')
+        self.is_on_blockchain = True
+
 
     def __str__(self):
         status = " " if self.is_on_blockchain else " not "

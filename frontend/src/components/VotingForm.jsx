@@ -2,6 +2,8 @@ import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import api from "../api"
 import ConnectButton from './ConnectButton'
+import LogoutButton from './LogoutButton'
+import LoadingSpinner from './LoadingSpinner'
 import "../styles.css"
 
 
@@ -11,8 +13,10 @@ function VotingForm({signer, userAddress}) {
     const [abi, setAbi] = useState(null)
     const [contractAddress, setContractAddress] = useState('')
     const [selectedCandidate, setSelectedCandidate] = useState(null)
+    const [showConfirmation, setShowConfirmation] = useState(false)
     const [votingSuccessful, setVotingSuccessful] = useState(false)
-    const [loading, setLoading] = useState(true)
+    const [fetchLoading, setFetchLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [metamaskAccount, setMetamaskAccount] = useState(null)
 
@@ -21,7 +25,7 @@ function VotingForm({signer, userAddress}) {
     }, [])
 
     const fetchData = async () => {
-        setLoading(true)
+        setFetchLoading(true)
         try{
             const candidates = await api.get('api/candidates/')
             const blockchainInfo = await api.get('api/blockchain/info/')
@@ -31,22 +35,30 @@ function VotingForm({signer, userAddress}) {
         } catch (e) {
             setError({'message': 'Failed to fetch Data.', 'code':0})
         } finally {
-            setLoading(false)
+            setFetchLoading(false)
+        }
+    }
+
+    const handleVoteClick = () => {
+        if (selectedCandidate) {
+            setShowConfirmation(true)
+        } else {
+            setError({'message': 'Please select a candidate before voting.', 'code': 0})
         }
     }
     
-    const handleSubmit = async (e) => {
+    const handleConfirmVote = async (e) => {
         setLoading(true)
         e.preventDefault()
 
         try{
             const contract = new ethers.Contract(contractAddress, abi, signer)
-            console.log(selectedCandidate)
             const tx = await contract.vote(selectedCandidate.blockchain_id)
             const receipt = await tx.wait()
-            console.log(receipt.status)
             if(receipt && receipt.status === 1){
+                console.log(receipt.status)
                 const res = await api.patch(`api/blockchain/set-address-voted/${userAddress}/`)
+                console.log(res)
                 setError(null)
                 setVotingSuccessful(true)
                 return <p>Your Vote was successful.</p>
@@ -54,7 +66,6 @@ function VotingForm({signer, userAddress}) {
                 setError({'message':'Voting was unsuccessful!','code':1})
             }
         } catch (e) {
-            console.dir(e)
             if(e.code){
                 if(e.reason && e.code === 'CALL_EXCEPTION' && e.reason === 'require(false)'){
                     setError({'message':'You have already voted with this address.', 'code':0})
@@ -68,50 +79,64 @@ function VotingForm({signer, userAddress}) {
                     setError({'message': e.message || 'An unknown error occurred', 'code':0})
                 }
             } else {
-                console.log(e)
                 setError({'message': e.message || 'An unknown error occurred', 'code':0})
             }
         } finally {
             setLoading(false)
+            setShowConfirmation(false)
         }
     }
 
-    if (loading){
-        return <div>Loading...</div>
+    if(fetchLoading){
+        return <LoadingSpinner></LoadingSpinner>
     }
 
     if(error && error.code === 0){
         return <p>{error.message}</p>
     }
 
-    if(votingSuccessful){
-        return <p>Your Vote was successful.</p>
-    }
-
     return (
-        <div className='container form-container'>
+        <div className='container'>
+            {loading && <LoadingSpinner></LoadingSpinner>}
             <header>
                 <h1>Public Voting Administration</h1>
                 <ConnectButton metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></ConnectButton>
+                <LogoutButton></LogoutButton>
             </header>
-            <h1>Voting</h1>
-            {error && error.code === 1 && <p className='error'>{error}</p>}
-            <form onSubmit={handleSubmit} className='form-container'>
-                {candidates.map(candidate => 
-                    <div key={candidate.id}>
-                        <label>
-                            {candidate.name}
-                            <input
+            <main>
+                <h2 className='title'>Voting</h2>
+                {error && error.code === 1 && <p className='error'>{error}</p>}
+                {showConfirmation ? (
+                    <div>
+                        <p>Are you sure you want to vote for {selectedCandidate.name}?</p>
+                        <button onClick={() => setShowConfirmation(false)}> Change Candidate</button>
+                        <button onClick={handleConfirmVote}>Confrim Vote</button>
+                    </div>
+                ) : votingSuccessful ? (
+                    <div>
+                        <p>Your Vote was successful.</p>
+                    </div>
+                ) : (
+                <form onSubmit={handleVoteClick} className='voting-form-container'>
+                    {candidates.map(candidate => 
+                        <label key={candidate.id} className='candidate-box'>
+                            <div className='candidate-label'>
+                                {candidate.name}
+                            </div>
+                            <input 
+                                className='candidate-input'
                                 name={'candidate'}
                                 type='radio'
                                 checked={selectedCandidate?.id === candidate.id}
                                 onChange={() => setSelectedCandidate(candidate)}
                             />
+                            
                         </label>
-                    </div>
+                    )}
+                    <button type='submit'>Voting</button>
+                </form>
                 )}
-                <button type='submit'>Voting</button>
-            </form>
+            </main>
         </div>
     )
 

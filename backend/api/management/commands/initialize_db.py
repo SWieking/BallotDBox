@@ -53,8 +53,8 @@ class Command(BaseCommand):
     
     def set_times(self):
         current_time = datetime.now(timezone.utc)
-        start_time = current_time + timedelta(seconds=20) 
-        end_time = current_time + timedelta(hours=1000)
+        start_time = current_time + timedelta(seconds=10) 
+        end_time = current_time + timedelta(hours=10000)
         ElectionTime.objects.create(start_time=start_time,end_time=end_time)
         self.stdout.write(self.style.SUCCESS('Successfully set election times'))
 

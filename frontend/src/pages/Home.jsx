@@ -1,17 +1,17 @@
 import { useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
+import Header from '../components/Header'
 import Countdown from '../components/Countdown'
-import ConnectButton from '../components/ConnectButton'
+import LoadingSpinner from '../components/LoadingSpinner'
 import '../styles.css'
 
 
 
 function Home() {
-    const [metamaskConnected, setMetamaskConnected] = useState(false)
     const [metamaskAccount, setMetamaskAccount] = useState(null)
     const [electionTime, setElectionTime] = useState(null)
-    const [loadingFetchData, setLoadingFetchData] = useState(true)
+    const [loading, setLoading] = useState(true)
     const [countdownCompleted, setCountdownCompleted] = useState(false)
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"]
@@ -23,14 +23,14 @@ function Home() {
     }, [])
 
     const fetchElectionTime = async () => {
-        setLoadingFetchData(true)
+        setLoading(true)
         try {
             const res = await api.get('api/election-time/')
             setElectionTime(res.data[0])
         } catch (error) {
             console.error('Error fetching election time', error)
         } finally {
-            setLoadingFetchData(false)
+            setLoading(false)
         }
     }
 
@@ -38,12 +38,8 @@ function Home() {
         if (!metamaskAccount){
             alert("Please connect to MetaMask first")
         } else {
-            return navigate('/vote')
+            navigate('/vote')
         }
-    }
-
-    if(loadingFetchData){
-        return <p>Loading...</p>
     }
 
     if (!electionTime) {
@@ -55,35 +51,36 @@ function Home() {
     const endTime = new Date(electionTime.end_time)
 
     return (
-        <div className="container home-container" >
-            <header>
-                <h1>Public Voting Administration</h1>
-                <ConnectButton metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></ConnectButton>
-            </header>
-            <main>
+        <div className="container" >
+            {loading && <LoadingSpinner></LoadingSpinner>}
+            <Header type={'home'} metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></Header>
+            <main className='home-container'>
                 <h2 className="title">Welcome to the Election</h2>
-                <div className="time-box">
-                    <p>Election starts on:</p>
-                    <p className="time">{startTime.getDate()}. {monthNames[startTime.getMonth()]} at {startTime.toLocaleTimeString(undefined,{timeStyle:'short'})}</p>
-                </div>
-                <div className="time-box">
-                    <p>Election ends on:</p>
-                    <p className="time">{endTime.getDate()}. {monthNames[endTime.getMonth()]} at {endTime.toLocaleTimeString(undefined,{timeStyle:'short'})}</p>
+                <div className='dates'>
+                    <div className="date-box">
+                        <p>Election starts on:</p>
+                        <p className="date">{startTime.getDate()}. {monthNames[startTime.getMonth()]} at {startTime.toLocaleTimeString(undefined,{timeStyle:'short'})}</p>
+                    </div>
+                    <div className="date-box">
+                        <p>Election ends on:</p>
+                        <p className="date">{endTime.getDate()}. {monthNames[endTime.getMonth()]} at {endTime.toLocaleTimeString(undefined,{timeStyle:'short'})}</p>
+                    </div>
                 </div>
                 {
                 currentTime < startTime ? (
-                    <div>
-                        <p>The Election has not started yet.</p>
+                    <div className='election-status-box'>
+                        <h3>Time Remaining</h3>
                         <Countdown targetTime={startTime} onComplete={() => setCountdownCompleted()}/>
                     </div>
                 ) : currentTime > endTime ? (
-                    <div>
-                        <p>The voting period ended!</p>
+                    <div className='election-status-box'>
+                        <h3>The voting period ended!</h3>
                     </div>
                 ) : (
-                    <div>
-                        <p>The Election is currently ongoing.</p>
-                        <button onClick={handleVoteClick}>Vote</button>
+                    <div className='election-status-box'>
+                        <h3>The Election is currently ongoing</h3>
+                        <button className='vote-button' onClick={handleVoteClick}>Vote</button>
+                        
                     </div>
                 )
                 }

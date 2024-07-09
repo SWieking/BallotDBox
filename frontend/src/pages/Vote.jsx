@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import api from '../api'
 import VotingForm from '../components/VotingForm'
 import { ethers } from 'ethers'
-import ConnectButton from "../components/ConnectButton"
+import Header from "../components/Header"
+import LoadingSpinner from "../components/LoadingSpinner"
 import '../styles.css'
 
 const Vote = () => {
@@ -14,6 +15,7 @@ const Vote = () => {
     const [loadingFetchSigner, setLoadingFetchSigner] = useState(true)
     const [error, setError] = useState(null)
     const [metamaskAccount, setMetamaskAccount] = useState(null)
+    const [hasVoted, setHasVoted] = useState(false)
 
     useEffect(() => {
         fetchUserAddressStatus()
@@ -85,16 +87,12 @@ const Vote = () => {
     const check_address_has_voted = async () => {
         try{
             const response = await api.get(`api/blockchain/get-address-voted/${ethereumAddress}/`)
-            const hasVoted = response.data.has_voted
-            console.log(hasVoted)
-            if(hasVoted){
-                setError(`You already voted with the address: ${ethereumAddress}`)
-            }
+            console.log(response.data.has_voted)
+            setHasVoted(response.data.has_voted)
         } catch (e){
             if(e.response && e.response.status === 404){
                 setError('The current address is not registered. Please ensure you have registered this address.')
             } else {
-                console.log(e)
                 setError(e.message)
             }
         }
@@ -105,7 +103,7 @@ const Vote = () => {
     }
 
     if (loadingFetchAddressStatus || loadingFetchSigner)  {
-        return <div>Loading...</div>
+        return <LoadingSpinner></LoadingSpinner>
     }
 
     if (error) {
@@ -122,41 +120,49 @@ const Vote = () => {
 
     if(ethereumAddressConfirmed){
         check_address_has_voted()
-    } else {
-        return (
-            <div className="container vote-container">
-                <header>
-                    <h1>Public Voting Administration</h1>
-                    <ConnectButton metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></ConnectButton>
-                </header>
-                <main>
-                    {hasRegisteredEthereumAddress ? (
-                        <div>
-                            <p>You have already registered an Ethereum address for voting.</p>
-                            <div className="address-box">
-                                <p>Your current Ethereum address is:</p>
-                                <p className="address">{ethereumAddress}</p>
-                            </div>
-                            <p>Is this the address you already registered?</p>
-                            <button onClick={() => setEthereumAddressConfirmed(true)}>Yes, confirm</button>
-                        </div>
-                    ) : (
-                        <div>
-                            <div className="address-box">
-                                <p>Your current Ethereum address is:</p>
-                                <p className="address">{ethereumAddress}</p>
-                            </div>
-                            <p>Is this the address you want to registere as your voting address? </p>
-                            <p className="alert">This action cannot be undone!</p>
-                            <button onClick={registerAddress}> Yes, confirm</button>
-                        </div>
-                    )
-                    }
-                </main>
-            </div>
-        )
     }
-    return <VotingForm signer={ethereumSigner} userAddress={ethereumAddress} />
+
+    if(!hasVoted && ethereumAddressConfirmed){
+        return <VotingForm signer={ethereumSigner} userAddress={ethereumAddress} />
+    }
+    
+    return (
+        <div className="container vote-container">
+            <Header type={'vote'} metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></Header>
+            <main>
+                {hasVoted ? (
+                    <div>
+                        <p>You already voted with the address:</p>
+                        <p className="address">{ethereumAddress}</p>
+                    </div>
+
+                ) : hasRegisteredEthereumAddress ? (
+                    <div>
+                        <p>You have already registered an Ethereum address for voting.</p>
+                        <div className="address-box">
+                            <p>Your current Ethereum address is:</p>
+                            <p className="address">{ethereumAddress}</p>
+                        </div>
+                        <p>Is this the address you already registered?</p>
+                        <button onClick={() => setEthereumAddressConfirmed(true)}>Yes, confirm</button>
+                    </div>
+                ) : (
+                    <div>
+                        <div className="address-box">
+                            <p>Your current Ethereum address is:</p>
+                            <p className="address">{ethereumAddress}</p>
+                        </div>
+                        <p>Is this the address you want to registere as your voting address? </p>
+                        <p className="alert">This action cannot be undone!</p>
+                        <button onClick={registerAddress}> Yes, confirm</button>
+                    </div>
+                )
+                }
+            </main>
+        </div>
+    )
+    
+
 }
 
 export default Vote

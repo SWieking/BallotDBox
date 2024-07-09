@@ -1,6 +1,7 @@
 import {useState} from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../api"
+import LoadingSpinner from "./LoadingSpinner"
 
 function RegisterForm() {
     const [username, setUsername] = useState("")
@@ -66,64 +67,72 @@ function RegisterForm() {
         }
     }
 
-    return <form onSubmit={handleSubmit} className="from-container">
+    return (
 
-        <h1>Register</h1>
-        <input 
-            className="form-input"
-            type="text"
-            value={username}
-            onChange ={ (e) => setUsername(e.target.value) }
-            placeholder="Username"
-        />
-        <input 
-            className="form-input"
-            type="password"
-            value={password}
-            onChange ={ (e) => setPassword(e.target.value) }
-            placeholder="Password"
-        />
-        <input 
-            className="form-input"
-            type="password"
-            value={confirmPW}
-            onChange ={ (e) => setConfirmPW(e.target.value) }
-            placeholder="Confirm Password"
-            
-        />
-        <input 
-            className="form-input"
-            type="text"
-            value={firstName}
-            onChange ={ (e) => setFirstName(e.target.value) }
-            placeholder="First name"
-        />
-        <input 
-            className="form-input"
-            type="text"
-            value={lastName}
-            onChange ={ (e) => setLastName(e.target.value) }
-            placeholder="Last name"
-        />
-        <input 
-            className="form-input"
-            type="text"
-            value={IdNumber}
-            onChange ={ (e) => setIdNumber(e.target.value) }
-            placeholder="ID number"
-        />
-        <input 
-            className="form-input"
-            type="password"
-            value={IdPIN}
-            onChange ={ (e) => setIdPIN(e.target.value) }
-            placeholder="ID PIN"
-        />
+        <div className="container">
+            {loading && <LoadingSpinner></LoadingSpinner>}
+            <form onSubmit={handleSubmit} className="form-container">
 
-        <button className="submit-button" type="submit" disabled={loading}>
-            Register
-        </button>
-    </form>
+                <h1>Register</h1>
+                <div className="form-input-name">
+                    <input 
+                        className="form-input"
+                        type="text"
+                        value={firstName}
+                        onChange ={ (e) => setFirstName(e.target.value) }
+                        placeholder="First name"
+                    />
+                    <input 
+                        className="form-input"
+                        type="text"
+                        value={lastName}
+                        onChange ={ (e) => setLastName(e.target.value) }
+                        placeholder="Last name"
+                    />
+                </div>
+                <input 
+                    className="form-input"
+                    type="text"
+                    value={username}
+                    onChange ={ (e) => setUsername(e.target.value) }
+                    placeholder="Username"
+                />
+                <input 
+                    className="form-input"
+                    type="password"
+                    value={password}
+                    onChange ={ (e) => setPassword(e.target.value) }
+                    placeholder="Password"
+                />
+                <input 
+                    className="form-input"
+                    type="password"
+                    value={confirmPW}
+                    onChange ={ (e) => setConfirmPW(e.target.value) }
+                    placeholder="Confirm Password"
+                    
+                />
+                <input 
+                    className="form-input"
+                    type="text"
+                    value={IdNumber}
+                    onChange ={ (e) => setIdNumber(e.target.value) }
+                    placeholder="ID number"
+                />
+                <input 
+                    className="form-input"
+                    type="password"
+                    value={IdPIN}
+                    onChange ={ (e) => setIdPIN(e.target.value) }
+                    placeholder="ID PIN"
+                />
+
+                <button className="submit-button" type="submit" disabled={loading}>
+                    Register
+                </button>
+            </form>
+        </div>
+    )
 }
 
 export default RegisterForm
