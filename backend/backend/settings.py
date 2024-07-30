@@ -20,10 +20,10 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-BC_SERVER_ADDRESS = os.getenv('BC_SERVER_ADDRESS')
-BC_CONTRACT_ADDRESS = os.getenv('BC_CONTRACT_ADDRESS')
-BC_ABI_PATH = os.getenv('BC_ABI_PATH')
-BC_OWNER_PK = os.getenv('BC_OWNER_PK')
+ETH_NODE_URL = os.getenv('ETH_NODE_URL')
+SMART_CONTRACT_ADDRESS = os.getenv('SMART_CONTRACT_ADDRESS')
+SMART_CONTRACT_ABI_PATH = os.getenv('SMART_CONTRACT_ABI_PATH')
+CONTRACT_OWNER_PK = os.getenv('CONTRACT_OWNER_PK')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -70,12 +70,12 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -155,3 +155,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+
+#CORS_ALLOWED_ORIGINS = [
+#    "http://localhost:5173"
+#]

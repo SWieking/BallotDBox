@@ -7,3 +7,4 @@ PyJWT
 pytz
 sqlparse
 web3
+python-dotenv

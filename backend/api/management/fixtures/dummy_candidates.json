@@ -1,14 +1,27 @@
 [
     {
         "name": "Herbert Schmidt",
-        "party": "SLP"
+        "party": "Social Liberty Party",
+        "age": 54
     },
     {
         "name": "Herold Smith",
-        "party": "DPF"
+        "party": "Democratic Progress Front",
+        "age": 47
     },
     {
-        "name": "Van der Lee",
-        "party": "LSP"
+        "name": "Victor van der Veen",
+        "party": "Liberal Social Party",
+        "age": 60
+    },
+    {
+        "name": "Emma Singh",
+        "party": "New Freedom Party",
+        "age": 54
+    },
+    {
+        "name": "Aisha Al-Hassan",
+        "party": "Visionary Action Party",
+        "age": 47
     }
 ]

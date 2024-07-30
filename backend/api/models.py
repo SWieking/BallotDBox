@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.hashers import make_password
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Max
 from .blockchain_utils import add_candidate_to_blockchain, delete_candidate_from_blockchain, update_candidate_on_blockchain, add_etherum_address_to_blockchain, setElectionTime
@@ -51,6 +50,7 @@ class EthereumAddress(models.Model):
 class Candidate(models.Model):
     name = models.CharField(max_length=255)
     party = models.CharField(max_length=255)
+    age = models.IntegerField(default=18)
     blockchain_id = models.IntegerField(unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):

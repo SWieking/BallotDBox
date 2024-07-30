@@ -3,12 +3,12 @@ from django.conf import settings
 import os
 import json
 
-server_address = settings.BC_SERVER_ADDRESS
-contract_address = settings.BC_CONTRACT_ADDRESS
-abi_path = settings.BC_ABI_PATH
-owner_pk = settings.BC_OWNER_PK
+node_url = settings.ETH_NODE_URL
+contract_address = settings.SMART_CONTRACT_ADDRESS
+abi_path = settings.SMART_CONTRACT_ABI_PATH
+owner_pk = settings.CONTRACT_OWNER_PK
 
-w3 = Web3(Web3.HTTPProvider(server_address))
+w3 = Web3(Web3.HTTPProvider(node_url))
 owner_account = w3.eth.account.from_key(owner_pk)
 w3.eth.defaultAccount = owner_account.address
 

@@ -16,11 +16,6 @@ h3{
     padding: 10px;
 }
 
-p{
-    font-size: 1.2em;
-    margin-bottom: 20px;
-}
-
 button{
     padding: 5px 10px;
     font-size: 1em;
@@ -59,14 +54,15 @@ button[disabled]{
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    align-items: center;
     text-align: center;
-    height: 100vh;
+    padding-top: 50px;
+    height: 100%;
     background-color:rgb(189, 189, 189);
 }
 
 .title{
     font-size: 2em;
-    margin-bottom: 75px;
 }
 
 .alert{
@@ -89,6 +85,11 @@ header{
     top: 0;
 }
 
+header h1{
+    font-size: 1.6em;
+    color: #2f496d;
+}
+
 .header-buttons{
     display: flex;
 }
@@ -96,7 +97,6 @@ header{
 .header-left{
     display: flex;
     align-items: center;
-
 }
 
 /* Home */
@@ -132,10 +132,15 @@ header{
     align-self: center;
 }
 
+.pre-vote-container{
+    padding-top: 100px;
+}
+
 /* Form */
 .form-container{
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     padding: 50px 35px; 
     background-color: white;
@@ -171,34 +176,51 @@ header{
 
 /* Voting-Form */
 
+
 .voting-form-container{
     display: flex;
     flex-direction: column;
     background-color: white;
-    padding: 100px;
+    padding: 40px 100px;
     border-radius: 5px;
+    padding-bottom: 10px;
     
 }
 
 .candidate-box{
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 10px;
     margin-bottom: 10px;
-    border: 0.08em solid;
+    border-radius: 5px;
     cursor: pointer;
+    background-color: #d4ecde;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .candidate-label{
-    font-size: 1.2em;
-    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 1em;
     cursor: pointer;
-    margin-right: 50px;
+    margin: 0 25px 0 10px;
+}
+
+.candidate-label p {
+    margin: 2px 0px;
 }
 
 .candidate-input{
     transform: scale(1.5);
+    margin-right: 10px;
+}
+
+.submit-vote-button{
+    font-size: 20px;
+    padding: 10px 10px;
+    margin: 25px;
+    align-self: center;
 }
 
 

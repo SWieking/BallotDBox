@@ -4,6 +4,7 @@ import api from "../api"
 import ConnectButton from './ConnectButton'
 import LogoutButton from './LogoutButton'
 import LoadingSpinner from './LoadingSpinner'
+import Header from "./Header"
 import "../styles.css"
 
 
@@ -98,11 +99,7 @@ function VotingForm({signer, userAddress}) {
     return (
         <div className='container'>
             {loading && <LoadingSpinner></LoadingSpinner>}
-            <header>
-                <h1>Public Voting Administration</h1>
-                <ConnectButton metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></ConnectButton>
-                <LogoutButton></LogoutButton>
-            </header>
+            <Header type={'vote'} metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></Header>
             <main>
                 <h2 className='title'>Voting</h2>
                 {error && error.code === 1 && <p className='error'>{error}</p>}
@@ -121,7 +118,9 @@ function VotingForm({signer, userAddress}) {
                     {candidates.map(candidate => 
                         <label key={candidate.id} className='candidate-box'>
                             <div className='candidate-label'>
-                                {candidate.name}
+                                <p>Name: {candidate.name}</p>
+                                <p>Party: {candidate.party}</p>
+                                <p>Age: {candidate.age}</p>
                             </div>
                             <input 
                                 className='candidate-input'
@@ -133,7 +132,7 @@ function VotingForm({signer, userAddress}) {
                             
                         </label>
                     )}
-                    <button type='submit'>Voting</button>
+                    <button className='submit-vote-button' type='submit'>Submit Your Vote</button>
                 </form>
                 )}
             </main>

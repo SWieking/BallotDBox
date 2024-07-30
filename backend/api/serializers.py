@@ -28,7 +28,7 @@ class EthereumAddressSerializer(serializers.ModelSerializer):
 class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
-        fields = ['id', 'name', 'party', 'blockchain_id']
+        fields = ['id', 'name', 'party', 'age' ,'blockchain_id']
 
 class ElectionTimeSerializer(serializers.ModelSerializer):
     class Meta:

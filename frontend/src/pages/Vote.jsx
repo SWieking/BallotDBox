@@ -127,7 +127,7 @@ const Vote = () => {
     }
     
     return (
-        <div className="container vote-container">
+        <div className="container pre-vote-container">
             <Header type={'vote'} metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></Header>
             <main>
                 {hasVoted ? (

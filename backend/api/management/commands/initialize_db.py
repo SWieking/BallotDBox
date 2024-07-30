@@ -59,8 +59,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Successfully set election times'))
 
     def load_blockchain_info(self):
-        contract_address = settings.BC_CONTRACT_ADDRESS
-        abi_path = settings.BC_ABI_PATH
+        contract_address = settings.SMART_CONTRACT_ADDRESS
+        abi_path = settings.SMART_CONTRACT_ABI_PATH
 
         with open(abi_path, 'r') as file:
             abi = json.load(file)['abi']

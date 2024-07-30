@@ -10,7 +10,7 @@ function Header({type, metamaskAccount, setMetamaskAccount}){
             <header>
                 <div className='header-left'>
                     <button>Home</button>
-                    <h1>Public Voting Administration</h1>
+                    <h1>BallotDBox</h1>
                 </div>
                 <div className='header-right'>
                     {type === 'login' ? (<button onClick={() => navigate('/register')}>Register</button>)
@@ -24,7 +24,7 @@ function Header({type, metamaskAccount, setMetamaskAccount}){
             <header>
                 <div className='header-left'>
                     <button onClick={() => navigate('/')}>Home</button>
-                    <h1>Public Voting Administration</h1>
+                    <h1>BallotDBox</h1>
                 </div>
                 <div className='header-right'>
                     <div className='header-buttons'>
