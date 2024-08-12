@@ -86,10 +86,10 @@ pip install -r requirements.txt
 **4. Create .env file**
 
 ```bash
-cp backend/.env.example backend/.env
+cp .env.example .env
 ```
 
-Then, modify `backend/.env` with the values you obtained:
+Then, modify `.env` with the values you obtained:
 
 ```plaintext
 ETH_NODE_URL="http://127.0.0.1:8545/"
@@ -130,10 +130,10 @@ npm install
 
 
 ```bash
-cp frontend/.env.example frontend/.env
+cp .env.example .env
 ```
 
-Then, modify `frontend/.env` with the correct API URL:
+Then, modify `.env` with the correct API URL:
 
 ```plaintext
 VITE_BACKEND_API_URL="http://127.0.0.1:8000/"  # URL from running the backend server with 'python manage.py runserver'
