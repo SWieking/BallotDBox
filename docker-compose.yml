@@ -1,0 +1,48 @@
+services:
+
+  blockchain:
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    volumes:
+      - blockchain-abi:/app/blockchain_abi
+    ports:
+      - "8545:8545"
+    healthcheck:
+      test: ["CMD", "test", "-f", "/app/deployment_successful.flag"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        ETH_NODE_URL: "http://blockchain:8545"
+        SMART_CONTRACT_ADDRESS: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        SMART_CONTRACT_ABI_PATH: "./blockchain_abi/BallotBox.json"
+        CONTRACT_OWNER_PK: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    volumes:
+      - blockchain-abi:/app/blockchain_abi
+    ports:
+      - "8000:8000"
+    depends_on:
+      blockchain:
+        condition: service_healthy
+
+    
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_API_URL: http://localhost:8000/
+    ports:
+      - "4173:4173"
+
+volumes:
+  blockchain-abi:
+
+

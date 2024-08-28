@@ -12,6 +12,7 @@ function RegisterForm() {
     const [IdNumber, setIdNumber] = useState("")
     const [IdPIN, setIdPIN] = useState("")
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
@@ -56,12 +57,13 @@ function RegisterForm() {
             })
             if(res.status === 201){
                 navigate("/login")
-            } else {
-                alert("An error occcurred: " + res.statusText)
             }
-        }
-        catch (error){
-            alert("An error occurred: " + error.message)
+        } catch (e){
+            if (e.response && e.response.status === 400){
+                setError('Registration failed. Please check your details and try again.') 
+            } else {
+                alert("An error occurred: " + e.message)
+            }
         } finally {
             setLoading(false)
         }
@@ -70,10 +72,11 @@ function RegisterForm() {
     return (
 
         <div className="container">
-            {loading && <LoadingSpinner></LoadingSpinner>}
+            {loading && <LoadingSpinner/>}
             <form onSubmit={handleSubmit} className="form-container">
 
-                <h1>Register</h1>
+                <h2>Register</h2>
+                {error && <div className="error-message">{error}</div>}
                 <div className="form-input-name">
                     <input 
                         className="form-input"

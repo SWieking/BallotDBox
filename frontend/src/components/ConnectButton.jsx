@@ -60,4 +60,4 @@ const ConnectButton = ({metamaskAccount, setMetamaskAccount}) => {
     );
 }
 
-export default ConnectButton;
+export default ConnectButton

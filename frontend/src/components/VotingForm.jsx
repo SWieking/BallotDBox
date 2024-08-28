@@ -40,11 +40,13 @@ function VotingForm({signer, userAddress}) {
         }
     }
 
-    const handleVoteClick = () => {
+    const handleVoteClick = (e) => {
+        e.preventDefault()
+
         if (selectedCandidate) {
             setShowConfirmation(true)
         } else {
-            setError({'message': 'Please select a candidate before voting.', 'code': 0})
+            setError({'message': 'Please select a candidate before voting.', 'code': 1})
         }
     }
     
@@ -57,25 +59,22 @@ function VotingForm({signer, userAddress}) {
             const tx = await contract.vote(selectedCandidate.blockchain_id)
             const receipt = await tx.wait()
             if(receipt && receipt.status === 1){
-                console.log(receipt.status)
                 const res = await api.patch(`api/blockchain/set-address-voted/${userAddress}/`)
-                console.log(res)
                 setError(null)
                 setVotingSuccessful(true)
-                return <p>Your Vote was successful.</p>
             } else {
                 setError({'message':'Voting was unsuccessful!','code':1})
             }
         } catch (e) {
             if(e.code){
                 if(e.reason && e.code === 'CALL_EXCEPTION' && e.reason === 'require(false)'){
-                    setError({'message':'You have already voted with this address.', 'code':0})
+                    setError({'message':'You have already voted with this address.', 'code':1})
                 }else if(e.code === 'ACTION_REJECTED'){
-                    setError({'message': 'You denied the transaction. Please try again and confirm the transaction in MetaMask.', 'code': 0})
+                    setError({'message': 'You denied the transaction. Please try again and confirm the transaction in MetaMask.', 'code': 1})
                 } else if (e.code === 'INSUFFICIENT_FUNDS') {
-                    setError({'message': 'You have insufficient funds to complete this transaction.', 'code': 0});
+                    setError({'message': 'You have insufficient funds to complete this transaction.', 'code': 1});
                 } else if (e.code === 'NETWORK_ERROR') {
-                    setError({'message': 'A network error occurred. Please check your connection and try again.', 'code': 0});
+                    setError({'message': 'A network error occurred. Please check your connection and try again.', 'code': 1});
                 } else {
                     setError({'message': e.message || 'An unknown error occurred', 'code':0})
                 }
@@ -89,51 +88,56 @@ function VotingForm({signer, userAddress}) {
     }
 
     if(fetchLoading){
-        return <LoadingSpinner></LoadingSpinner>
+        return <LoadingSpinner/>
     }
 
     if(error && error.code === 0){
-        return <p>{error.message}</p>
+        return(
+                <div className="container">
+                    <div className='error-message'>{error.message}</div>
+                </div>)
     }
 
     return (
         <div className='container'>
-            {loading && <LoadingSpinner></LoadingSpinner>}
+            {loading && <LoadingSpinner/>}
             <Header type={'vote'} metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></Header>
             <main>
                 <h2 className='title'>Voting</h2>
-                {error && error.code === 1 && <p className='error'>{error}</p>}
                 {showConfirmation ? (
                     <div>
-                        <p>Are you sure you want to vote for {selectedCandidate.name}?</p>
+                        <p>Are you sure you want to vote for <b>{selectedCandidate.name}</b></p>
                         <button onClick={() => setShowConfirmation(false)}> Change Candidate</button>
-                        <button onClick={handleConfirmVote}>Confrim Vote</button>
+                        <button onClick={handleConfirmVote}>Confirm Vote</button>
                     </div>
                 ) : votingSuccessful ? (
                     <div>
                         <p>Your Vote was successful.</p>
                     </div>
                 ) : (
-                <form onSubmit={handleVoteClick} className='voting-form-container'>
-                    {candidates.map(candidate => 
-                        <label key={candidate.id} className='candidate-box'>
-                            <div className='candidate-label'>
-                                <p>Name: {candidate.name}</p>
-                                <p>Party: {candidate.party}</p>
-                                <p>Age: {candidate.age}</p>
-                            </div>
-                            <input 
-                                className='candidate-input'
-                                name={'candidate'}
-                                type='radio'
-                                checked={selectedCandidate?.id === candidate.id}
-                                onChange={() => setSelectedCandidate(candidate)}
-                            />
-                            
-                        </label>
-                    )}
-                    <button className='submit-vote-button' type='submit'>Submit Your Vote</button>
-                </form>
+                <div>
+                    {error && error.code === 1 && <div className='error-message'>{error.message}</div>}
+                    <form onSubmit={handleVoteClick} className='voting-form-container'>
+                        {candidates.map(candidate => 
+                            <label key={candidate.id} className='candidate-box'>
+                                <div className='candidate-label'>
+                                    <p>Name: {candidate.name}</p>
+                                    <p>Party: {candidate.party}</p>
+                                    <p>Age: {candidate.age}</p>
+                                </div>
+                                <input 
+                                    className='candidate-input'
+                                    name={'candidate'}
+                                    type='radio'
+                                    checked={selectedCandidate?.id === candidate.id}
+                                    onChange={() => setSelectedCandidate(candidate)}
+                                />
+                                
+                            </label>
+                        )}
+                        <button className='submit-vote-button' type='submit'>Submit Your Vote</button>
+                    </form>
+                </div>
                 )}
             </main>
         </div>

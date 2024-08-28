@@ -1,5 +1,11 @@
 [
     {
+        "first_name": "Alex",
+        "last_name": "Schmidt",
+        "id_number": "1122334455",
+        "id_pin": "password00"
+    },
+    {
         "first_name": "Nikol",
         "last_name": "Vansko",
         "id_number": "1234567890",
@@ -16,5 +22,11 @@
         "last_name": "Darko",
         "id_number": "1112233445",
         "id_pin": "password22"
+    },
+    {
+        "first_name": "Hans",
+        "last_name": "Müller",
+        "id_number": "2222333344",
+        "id_pin": "password33"
     }
 ]

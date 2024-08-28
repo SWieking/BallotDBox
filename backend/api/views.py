@@ -10,8 +10,6 @@ from django.contrib.auth.hashers import make_password
 from django.utils.decorators import method_decorator
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-#import pdb    // pdb.set_trace()
-
 
 class CreatCustomUserView(generics.CreateAPIView):
 
@@ -35,7 +33,7 @@ class CreatCustomUserView(generics.CreateAPIView):
                 return Response({'error': 'Verification failed. Please check your inputs and try again.'}, status=status.HTTP_400_BAD_REQUEST)
 
         except EligibleVoter.DoesNotExist:
-            return Response({'error': 'Verification failed'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Verification failed. Please check your inputs and try again.'}, status=status.HTTP_400_BAD_REQUEST)
         
 class EligibleVoterAdminView(viewsets.ModelViewSet):
     queryset = EligibleVoter.objects.all()

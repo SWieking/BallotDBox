@@ -43,7 +43,7 @@ function Home() {
     }
 
     if (!electionTime) {
-        return <div>Could not fetch election times. Please try again later.</div>;
+        return <LoadingSpinner/>
     }
 
     const currentTime = new Date().valueOf()
@@ -52,7 +52,7 @@ function Home() {
 
     return (
         <div className="container" >
-            {loading && <LoadingSpinner></LoadingSpinner>}
+            {loading && <LoadingSpinner/>}
             <Header type={'home'} metamaskAccount={metamaskAccount} setMetamaskAccount={setMetamaskAccount}></Header>
             <main className='home-container'>
                 <h2 className="title">Welcome to the Election</h2>
@@ -80,6 +80,7 @@ function Home() {
                     <div className='election-status-box'>
                         <h3>The Election is currently ongoing</h3>
                         <button className='vote-button' onClick={handleVoteClick}>Vote</button>
+                        <button className='result-button' onClick={()=>navigate('/election-results')}>Election Results</button>
                         
                     </div>
                 )

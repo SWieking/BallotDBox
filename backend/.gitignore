@@ -4,6 +4,8 @@ __pycache__/
 .env
 *.pyc
 
+# Virtual environment
+env/
 
 # Django 
 *.log

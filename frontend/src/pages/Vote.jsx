@@ -103,7 +103,7 @@ const Vote = () => {
     }
 
     if (loadingFetchAddressStatus || loadingFetchSigner)  {
-        return <LoadingSpinner></LoadingSpinner>
+        return <LoadingSpinner/>
     }
 
     if (error) {
@@ -115,7 +115,7 @@ const Vote = () => {
                 </div>
             )
         }
-        return <div>{error}</div>
+        return <div className="error-message">{error}</div>
     }
 
     if(ethereumAddressConfirmed){

@@ -48,9 +48,9 @@ Ensure you have the following installed on your system:
 - pip (Python package installer)
 - Node.js
 
-## Installation
+If you prefer to use Docker, make sure Docker and Docker Compose are installed on your system.
 
-Follow these steps to set up the development environment and get the project started.
+## Installation and Setup
 
 ### Clone the repository
 
@@ -60,6 +60,26 @@ Open a terminal and clone the repository by execute the following command
 git clone https://github.com/SWieking/BallotDBox.git
 cd BallotDBox
 ```
+
+### Using Docker (Recommended)
+
+1. **Build and start the application:**
+
+   ```bash
+   docker compose up --build
+   ```
+
+   This command will set up and start all necessary services (backend, frontend, blockchain) within Docker containers. 
+   Now you can access the application by navigating to `http://localhost:4173` in your web browser.
+
+2. **Creating a User Account:**
+
+   After the Docker setup is complete, proceed to [Creating a User Account](#creating-a-user-account) to register and start using the application.
+
+
+### Manual Setup
+
+If you encounter issues with Docker or prefer to set up the system manually, follow the steps below:
 
 ### Backend Setup
 
@@ -219,12 +239,21 @@ Now everything is set up, and you can access the voting web application at http:
 To test the system using a predefined eligible voter, follow these steps:
 
 1. **Navigate to the registration page** in the web application.
-2. **Use the details** of one of the predefined eligible voters that you loaded into the database. Here's an example of how you might use this data:
+2. **Use the details** of one of the predefined eligible voters that you loaded into the database. The dummy voter data can be found in the following file: `BallotDBox/backend/api/management/fixtures/dummy_voters.json`
+
+	Here's an example of how you might use this data:
    - **Username**: Choose a unique username.
-   - **Password**: Choose a strong password.
+   - **Password**: Choose a password.
    - **First Name**: Use the first name from the dummy data.
    - **Last Name**: Use the last name from the dummy data.
    - **ID Number**: Enter the ID number from the dummy data.
+   - **ID PIN**: Enter the ID number from the dummy data.
+
+   To quickly test the app, you can use the following predefined data:
+   - **First Name:** Alex  
+   - **Last Name:** Schmidt  
+   - **ID Number:** 1122334455  
+   - **ID PIN:** password00 
    
 3. **Submit the form** to create a new user account. If successful, you can then log in using these credentials.
 
@@ -236,12 +265,11 @@ Since this application runs on a local blockchain network instead of the actual 
  **Configure MetaMask for the Local Network**:
    - Click on the network selection button at the top left of the MetaMask interface.
    - Select "Add Network" and enter the following details to configure the local network:
-
-- **Network Name**: *`Hardhat`*
-- **New RPC URL**: *`http://127.0.0.1:8545/`* (as shown in the output of "npx hardhat node")
-- **Chain ID**: *`31337`* (specified in the Hardhat config file)
-- **Currency Symbol**: *`ETH`*
-- **Block Explorer URL**: (Optional) leave this field empty
+		- **Network Name**: *`Hardhat`*
+		- **New RPC URL**: *`http://127.0.0.1:8545/`* (as shown in the output of "npx hardhat node")
+		- **Chain ID**: *`31337`* (specified in the Hardhat config file)
+		- **Currency Symbol**: *`ETH`*
+		- **Block Explorer URL**: (Optional) leave this field empty
 
 Ensure the details are correct. After entering the network details, click "Save" to add the network. Your MetaMask should now be connected to the local Hardhat network.
 

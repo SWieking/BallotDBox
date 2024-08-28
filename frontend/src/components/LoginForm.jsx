@@ -9,6 +9,7 @@ function LoginForm() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
@@ -24,11 +25,13 @@ function LoginForm() {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
                 navigate("/")
-            } else {
-                alert("An error occcurred: " + res.statusText)
             }
-        } catch (error){
-            alert("An error occurred: " + error.message)
+        } catch (e){
+            if (e.response && e.response.status === 401) {
+                setError("Invalid credentials, please try again.")
+            } else {
+                alert("An error occurred: " + e.message)
+            }
         } finally {
             setLoading(false)
         }
@@ -36,10 +39,10 @@ function LoginForm() {
 
     return (
     <div className="container">
-        {loading && <LoadingSpinner></LoadingSpinner>}
+        {loading && <LoadingSpinner/>}
         <form onSubmit={handleSubmit} className="form-container">
-
-            <h1>Login</h1>
+            <h2>Login</h2>
+            {error && <div className="error-message">{error}</div>}
             <input 
                 className="form-input"
                 type="text"
