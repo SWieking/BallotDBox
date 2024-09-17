@@ -14,7 +14,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user = get_user_model().objects.create_user(**validated_date)
         return user
 
-
 class AdminEligibleVotersSerializer(serializers.ModelSerializer):
     class Meta:
         model = EligibleVoter

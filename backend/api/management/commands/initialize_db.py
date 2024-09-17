@@ -20,9 +20,10 @@ class Command(BaseCommand):
 
     def clear_data(self, hard_reset):
         if hard_reset:
-            models = apps.get_models()
+            models = apps.get_models() #clear all models, including users, if hard reset is specified
         else:
-            models = [EligibleVoter, EthereumAddress, Candidate, ElectionTime, BlockchainInfo]
+            models = [EligibleVoter, EthereumAddress, Candidate, ElectionTime, BlockchainInfo] #clear only specific models, but keep users
+        
         
         for model in models:
             try:
@@ -33,6 +34,7 @@ class Command(BaseCommand):
 
 
     def load_voters(self, *args, **kwargs):
+        #create voter records from the JSON file
         json_file_path = settings.BASE_DIR / 'api' / 'management' / 'fixtures' / 'dummy_voters.json'
 
         with open(json_file_path, 'r') as file:
@@ -43,17 +45,18 @@ class Command(BaseCommand):
         
 
     def load_candidates(self):
+        #create candidate records from the JSON file
         json_file_path = settings.BASE_DIR / 'api' / 'management' / 'fixtures' / 'dummy_candidates.json'
        
         with open(json_file_path, 'r') as file:
             candidates = json.load(file)
             for candidate in candidates:
-                Candidate.objects.create(**candidate)
+                Candidate.objects.create(**candidate) 
             self.stdout.write(self.style.SUCCESS('Successfully loaded all candidates.'))
     
     def set_times(self):
         current_time = datetime.now(timezone.utc)
-        start_time = current_time + timedelta(seconds=10) 
+        start_time = current_time + timedelta(seconds=60) 
         end_time = current_time + timedelta(hours=10000)
         ElectionTime.objects.create(start_time=start_time,end_time=end_time)
         self.stdout.write(self.style.SUCCESS('Successfully set election times'))
@@ -77,12 +80,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        hard_reset = options['hard']
+        hard_reset = options['hard']  #check if hard reset option is selected (clears all models in the database, including users)
         
         with transaction.atomic():
             try:
                 self.clear_data(hard_reset)
-                if not hard_reset: self.set_has_address_false()
+                if not hard_reset: self.set_has_address_false()  #reset user addresses status if not hard resetting
                 self.load_voters()
                 self.load_candidates()
                 self.set_times()

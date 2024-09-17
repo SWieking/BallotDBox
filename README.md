@@ -262,7 +262,7 @@ To test the system using a predefined eligible voter, follow these steps:
 When you attempt to vote, you will be prompted by the application to **install MetaMask** if it is not already installed.
 Since this application runs on a local blockchain network instead of the actual Ethereum mainnet, you need to configure MetaMask to connect to the local network. Follow these steps to set up MetaMask.
 
- **Configure MetaMask for the Local Network**:
+**Configure MetaMask for the Local Network**:
    - Click on the network selection button at the top left of the MetaMask interface.
    - Select "Add Network" and enter the following details to configure the local network:
 		- **Network Name**: *`Hardhat`*
@@ -279,6 +279,34 @@ Ensure the details are correct. After entering the network details, click "Save"
    - Enter the private key of one of the predefined accounts from the Hardhat node output. Do not use Account #0 as it is the owner of the contract.
 
 By following these steps, you will be able to fully test the voting system using the local blockchain network configured with Hardhat and MetaMask.
+
+
+## Screenshots of the App
+
+**Login:**
+![Login Screen](images/login.png)
+**Registration:**
+![Registration Screen](images/register.png)
+**Home:**
+![Home Screen 1](images/home1.png)
+![Home Screen 2](images/home2.png)
+**Metamask:**
+![MetaMask Screen](images/metamask.png)
+**Register Address:**
+![Register Address Screen](images/register-address.png)
+**Voting Form:**
+![Voting Screen](images/vote.png)
+**Confirm Vote:**
+![Confirm Vote Screen](images/confirm-vote.png)
+**Election Results:**
+![Election Results Screen](images/election-results.png)
+
+
+
+
+
+
+
 
 ## License
 

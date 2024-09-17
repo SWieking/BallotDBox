@@ -14,17 +14,20 @@ function LoginForm() {
 
     const handleSubmit = async (e) => {
         setLoading(true)
-        e.preventDefault()
+        //prevent the default form submission behavior
+        e.preventDefault() 
 
         try{
             const res = await api.post("api/token/", {
                 username: username,
                 password: password,
             })
+            //store the tokens in local storage on successful login
             if(res.status === 200){
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
-                navigate("/")
+                //redirect to the homepage after successful login
+                navigate("/") 
             }
         } catch (e){
             if (e.response && e.response.status === 401) {

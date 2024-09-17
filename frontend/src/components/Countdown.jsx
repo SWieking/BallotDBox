@@ -1,18 +1,21 @@
 import React, {useEffect, useState} from 'react'
 
 function Countdown({targetTime, onComplete}) {
-    const [timeLeft, setTimeLeft] = useState(targetTime - new Date().valueOf())
+    
+    //initialize time left until target time
+    const [timeLeft, setTimeLeft] = useState(targetTime - new Date().valueOf()) 
 
     useEffect(() => {
         const interval = setInterval(() => {
             const remainingTime = targetTime - new Date().valueOf()
             setTimeLeft(remainingTime)
+            //stop the interval when countdown is complete
             if(remainingTime <= 0){
                 clearInterval(interval)
                 onComplete()
             }
         }, 1000)
-
+        //cleanup interval on component unmount
         return () => clearInterval(interval)
     },[])
 
@@ -37,6 +40,7 @@ function Countdown({targetTime, onComplete}) {
     const times = formatTimeLeft(timeLeft)
     console.log(times)
 
+    //find the first non-zero time unit
     const firstNoneZeroIndex = times.findIndex((time) => time.value > 0)
     
     return (

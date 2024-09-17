@@ -22,6 +22,7 @@ function VotingForm({signer, userAddress}) {
     const [metamaskAccount, setMetamaskAccount] = useState(null)
 
     useEffect(() => {
+        //fetch candidates and blockchain contract data on component mount
         fetchData()
     }, [])
 
@@ -30,8 +31,10 @@ function VotingForm({signer, userAddress}) {
         try{
             const candidates = await api.get('api/candidates/')
             const blockchainInfo = await api.get('api/blockchain/info/')
-            setCandidates(candidates.data)
             setAbi(blockchainInfo.data[0].abi)
+            //set the ABI for the smart contract
+            setCandidates(candidates.data)
+            //set the contract address for the smart contract
             setContractAddress(blockchainInfo.data[0].contract_address)
         } catch (e) {
             setError({'message': 'Failed to fetch Data.', 'code':0})
@@ -43,6 +46,7 @@ function VotingForm({signer, userAddress}) {
     const handleVoteClick = (e) => {
         e.preventDefault()
 
+        //show confirmation prompt if a candidate was selected, set error if no candidate is selected
         if (selectedCandidate) {
             setShowConfirmation(true)
         } else {
@@ -55,10 +59,14 @@ function VotingForm({signer, userAddress}) {
         e.preventDefault()
 
         try{
+            //initialize contract instance
             const contract = new ethers.Contract(contractAddress, abi, signer)
+            //initiate voting transaction
             const tx = await contract.vote(selectedCandidate.blockchain_id)
+            //wait for the transaction to be mined
             const receipt = await tx.wait()
             if(receipt && receipt.status === 1){
+                //update backend that user has voted
                 const res = await api.patch(`api/blockchain/set-address-voted/${userAddress}/`)
                 setError(null)
                 setVotingSuccessful(true)
@@ -66,6 +74,7 @@ function VotingForm({signer, userAddress}) {
                 setError({'message':'Voting was unsuccessful!','code':1})
             }
         } catch (e) {
+            //handle various Ethereum errors based on the error code
             if(e.code){
                 if(e.reason && e.code === 'CALL_EXCEPTION' && e.reason === 'require(false)'){
                     setError({'message':'You have already voted with this address.', 'code':1})
@@ -142,8 +151,6 @@ function VotingForm({signer, userAddress}) {
             </main>
         </div>
     )
-
-
 }
 
 export default VotingForm

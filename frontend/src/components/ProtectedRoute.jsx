@@ -11,10 +11,10 @@ function ProtectedRoute({children}) {
     useEffect(() => {
         (async () => { 
         try{
-            auth()
+            auth() //check the current authentication status on component mount
         } catch (error){
             alert(`Authentication error: ${error}`)
-            setIsAuthorized(false)
+            setIsAuthorized(false) //set authorization to false if an error occurs
         }
         })()
     }, [])
@@ -22,12 +22,14 @@ function ProtectedRoute({children}) {
     const refreshToken = async () => {
         const refreshToken = localStorage.getItem(REFRESH_TOKEN)
         try{
+            //attempt to refresh the access token using the refresh token
             const res = await api.post("/api/token/refresh/", {
-                refresh: refreshToken
+                refresh: refreshToken 
             })
+            //set authorization to true if token refresh is successful, else false
             if(res.status === 200){
                 localStorage.setItem(ACCESS_TOKEN, res.data.access)
-                setIsAuthorized(true)
+                setIsAuthorized(true) 
             } else {
                 setIsAuthorized(false)
             }
@@ -39,15 +41,19 @@ function ProtectedRoute({children}) {
 
     const auth = async () => {
         const token = localStorage.getItem(ACCESS_TOKEN)
+
+        //set authorization to false if no access token is found
         if(!token) {
             setIsAuthorized(false)
             return
         }
 
+        //decode the JWT token to check its expiration
         const decoded =  jwtDecode(token)
         const tokenExpiration = decoded.exp
         const now = Date.now() / 1000
 
+        //refresh the token if it has expired, otherwise set authorization to true        
         if (tokenExpiration < now){
             await refreshToken()
         } else {
@@ -59,6 +65,7 @@ function ProtectedRoute({children}) {
         return <LoadingSpinner/>
     }
     
+    //redirect to login if not authorized
     return isAuthorized ? children : <Navigate to="/login" />
 }
 

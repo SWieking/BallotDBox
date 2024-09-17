@@ -20,9 +20,11 @@ const Vote = () => {
     useEffect(() => {
         fetchUserAddressStatus()
         fetchEthereumSignerAndAddress()
+
+        //reload page on MetaMask chain/account change
         if (window.ethereum) {
-            window.ethereum.on('chainChanged', () => handleMetamaskChanges)
-            window.ethereum.on('accountsChanged', () => handleMetamaskChanges)
+            window.ethereum.on('chainChanged', () => handleMetamaskChanges) 
+            window.ethereum.on('accountsChanged', () => handleMetamaskChanges) 
         }
         return () => {
             if (window.ethereum){
@@ -48,7 +50,9 @@ const Vote = () => {
         setLoadingFetchSigner(true)
         try{
             if(window.ethereum){
+                //initialize ethers provider using MetaMask
                 const provider = new ethers.BrowserProvider(window.ethereum)
+                //get the signer (current MetaMask account)
                 const signer = await provider.getSigner()
                 const address = await signer.getAddress()
                 setEthereumSigner(signer)

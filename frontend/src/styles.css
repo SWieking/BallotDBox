@@ -7,7 +7,7 @@ body{
     margin: 0;
     font-family: Tahoma, Geneva, sans-serif;
     font-size: 16px;
-    background-color:rgb(189, 189, 189);
+    background-color:rgb(230, 230, 230);
     color:rgb(0, 0, 0);
     padding-top: var(--header-height);
 }
@@ -67,7 +67,6 @@ button[disabled]{
     text-align: center;
     padding-top: calc(var(--header-height) + 50px);
     height: 100%;
-    background-color:rgb(189, 189, 189);
 }
 
 .title{
@@ -133,7 +132,7 @@ header h1{
 }
 
 .date{
-    background-color:rgb(255, 235, 219);
+    background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 10px;
@@ -249,14 +248,25 @@ header h1{
 }
 
 /* Election Results */
+.total-votes{
+    font-size: 1.5em; 
+    background-color: #d4ecde;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px 30px; 
+    margin: 30px auto;
+    width: fit-content; 
+    border-radius: 5px;
+    font-weight: bold; 
+    text-align: center;
+}
+
+
 .result-container{
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
 }
-
-
 
 .candidate-result-box{
     border-radius: 5px;
@@ -281,6 +291,13 @@ header h1{
     color: rgb(0, 101, 178);
     font-size: 1.2em;
     font-weight: bold;
+}
+
+.vote-chart-container{
+    max-width: 1000px; 
+    max-height: 800px; 
+    margin: 30px auto; 
+    width: 100%; 
 }
 
 /* Connect-Button */
